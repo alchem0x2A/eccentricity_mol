@@ -21,7 +21,10 @@ def sort_images(images, small_first=True, save_ecc=True):
     # Save the eccentricity info inside the atoms.info field
     if save_ecc:
         for i, ec in enumerate(scores):
-            imgs_[i].info.pop("")
+            try:
+                imgs_[i].info.pop("")
+            except KeyError:
+                pass
             imgs_[i].info.update(eccentricity=ec)
     return imgs_, scores
 
@@ -31,7 +34,7 @@ def convert(infile, outfile=None, force_xyz=True, **kwargs):
         images = read(infile, index=":") # read all trajectories
     except (IOError, FileNotFoundError):
         print("Cannot read input file")
-        return False
+        return 1
 
     if outfile is None:
         outfile = infile.with_suffix(".xyz")
@@ -43,4 +46,8 @@ def convert(infile, outfile=None, force_xyz=True, **kwargs):
             outfile = outfile.with_suffix(".xyz")
 
     images_, scores = sort_images(images, **kwargs)
-    write(outfile.resolve().as_posix(), images_)
+    try:
+        write(outfile.resolve().as_posix(), images_)
+        return 0
+    except Exception:
+        return 1

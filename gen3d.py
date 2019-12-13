@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-from .eccentricity.io_atoms import convert
+from .obabel.utils import run_job
 from argparse import ArgumentParser
 
 def main():
@@ -11,11 +11,7 @@ def main():
                           default=None,
                           help="Output file for sorted images. If not specified, overwrite the input")
     args = parser.parse_args()
-    ec = convert(infile=args.infile, outfile=args.outfile)
-    if ec == 0:
-        print("Sorting conformers successfully")
-    else:
-        print("Sorting conformers failed. Please check")
+    run_job(job="3D", infile=args.infile, outfile=args.outfile)
 
 if __name__ == '__main__':
     main()
